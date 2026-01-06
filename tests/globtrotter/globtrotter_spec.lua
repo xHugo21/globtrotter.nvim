@@ -56,6 +56,7 @@ describe("globtrotter", function()
     it("uses default config when no args", function()
       globtrotter.setup()
       assert.are.equal(50, globtrotter.config.max_results)
+      assert.are.equal("K", globtrotter.config.trigger_key)
     end)
 
     it("supports trigger_key config", function()

@@ -3,7 +3,7 @@
 ---@field include_hidden? boolean Include hidden files in results (default: true)
 ---@field border? string|table Border style for floating window (default: "single")
 ---@field auto_enable? boolean Automatically enable LSP hover override on setup (default: true)
----@field trigger_key? string Key to trigger the glob preview (default: nil)
+---@field trigger_key string Key to trigger the glob preview (default: "K")
 
 local ui = require("globtrotter.ui")
 
@@ -16,7 +16,7 @@ local default_config = {
   include_hidden = true,
   border = (vim.o.winborder and vim.o.winborder ~= "") and vim.o.winborder or "single",
   auto_enable = true,
-  trigger_key = nil,
+  trigger_key = "K",
 }
 
 ---@type GlobtrotterConfig

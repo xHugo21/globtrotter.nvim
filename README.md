@@ -39,10 +39,11 @@ You can let the plugin handle the keymap for you by setting `trigger_key` in the
     require("globtrotter").setup({
       max_results = 50,      -- Maximum number of files to show
       include_hidden = true, -- Include hidden files in search
-      border = "single",     -- "none", "single", "double", "rounded", "solid", "shadow"
+      border = "rounded",    -- "none", "single", "double", "rounded", "solid", "shadow"
       auto_enable = true,    -- Automatically enable LSP hover override
-      trigger_key = "K",     -- Optional: Automatically set a keymap to trigger the preview
+      trigger_key = "K",     -- Key to trigger the preview
     })
+
 
 ```
 
@@ -69,7 +70,7 @@ end, { desc = "Trigger (Globtrotter / LSP)" })
 | `include_hidden` | `boolean` | `true` | Whether to include dotfiles in the results. |
 | `border` | `string` | `winborder` or `"single"` | Border style for the floating window. |
 | `auto_enable` | `boolean` | `true` | Whether to automatically hijack `vim.lsp.handlers["textDocument/hover"]`. |
-| `trigger_key` | `string` | `nil` | Optional: Key to automatically map to the trigger function. |
+| `trigger_key` | `string` | `"K"` | Key to automatically map to the trigger function. |
 
 ## License
 
