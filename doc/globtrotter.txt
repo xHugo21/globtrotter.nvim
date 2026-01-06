@@ -16,6 +16,8 @@ A Neovim plugin that detects glob patterns under your cursor and shows matching
 files in an LSP-style floating window.
 
 
+
+
 INSTALLATION                       *globtrotter-globtrotter.nvim-installation*
 
 lazy:
