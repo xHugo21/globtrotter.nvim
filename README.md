@@ -1,20 +1,10 @@
 # globtrotter.nvim
 
-![Lua](https://img.shields.io/badge/Made%20with%20Lua-blueviolet.svg?style=for-the-badge&logo=lua)
-
 A Neovim plugin that detects glob patterns under your cursor and shows matching files in an LSP-style floating window.
-
-## Features
-
-- **Smart Detection**: Automatically identifies glob characters (`*`, `?`, `**`, `[...]`, `{...}`) in the word under the cursor.
-- **Ignore File Support**: Full support for `.gitignore`, `.dockerignore`, and other ignore-style files. Every line is treated as a potential glob.
-- **LSP Integration**: Seamlessly injects glob matching into your existing workflow by augmenting the LSP hover mechanism.
-- **Native UI**: Uses Neovim's built-in floating window API for a consistent look and feel.
-- **Configurable**: Limit result counts, toggle hidden files, and customize window borders.
 
 ## Installation
 
-Using [lazy.nvim](https://github.com/folke/lazy.nvim):
+lazy:
 
 ```lua
 {
