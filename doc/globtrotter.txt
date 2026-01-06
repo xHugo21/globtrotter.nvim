@@ -1,0 +1,127 @@
+*globtrotter.txt*       For Neovim >= 0.8.0       Last change: 2026 January 06
+
+==============================================================================
+Table of Contents                              *globtrotter-table-of-contents*
+
+1. globtrotter.nvim                             |globtrotter-globtrotter.nvim|
+  - Installation                   |globtrotter-globtrotter.nvim-installation|
+  - Usage                                 |globtrotter-globtrotter.nvim-usage|
+  - Configuration                 |globtrotter-globtrotter.nvim-configuration|
+  - License                             |globtrotter-globtrotter.nvim-license|
+
+==============================================================================
+1. globtrotter.nvim                             *globtrotter-globtrotter.nvim*
+
+A Neovim plugin that detects glob patterns under your cursor and shows matching
+files in an LSP-style floating window.
+
+
+INSTALLATION                       *globtrotter-globtrotter.nvim-installation*
+
+lazy:
+
+>lua
+    {
+      "xhugo21/globtrotter.nvim",
+      opts = {
+        max_results = 50,      -- Maximum number of files to show
+        include_hidden = true, -- Include hidden files in search
+        border = "rounded",    -- "none", "single", "double", "rounded", "solid", "shadow"
+        override_lsp_hover = true, -- Globally override LSP hover handler
+        trigger_key = "K",     -- Key to trigger the preview
+      },
+    }
+<
+
+
+USAGE                                     *globtrotter-globtrotter.nvim-usage*
+
+
+KEYMAP (MANUAL VS AUTOMATIC) ~
+
+You can let the plugin handle the keymap for you by setting `trigger_key` in
+the configuration (defaults to `K`):
+
+>lua
+    require("globtrotter").setup({
+      trigger_key = "K" -- This sets the mapping automatically
+    })
+<
+
+Or you can map it yourself to the Globtrotter trigger function. It will fall
+back to `vim.lsp.buf.hover()` if no glob is detected.
+
+>lua
+    vim.keymap.set("n", "K", function()
+      require("globtrotter").trigger()
+    end, { desc = "Trigger (Globtrotter / LSP)" })
+<
+
+
+ADVANCED: TRIGGER VS. OVERRIDE ~
+
+  -----------------------------------------------------------------------
+  Option                  What it does            Use Case
+  ----------------------- ----------------------- -----------------------
+  trigger_key             Automatically maps a    You want a single key
+                          key (default K) to the  to “just work” for both
+                          glob preview. If no     globs and LSP
+                          glob is found, it calls documentation.
+                          the standard LSP hover. 
+
+  override_lsp_hover      Globally hijacks        You use other plugins
+                          Neovim’s internal LSP   (like LspSaga or Noice)
+                          hover handler.          and want them to also
+                                                  show glob matches
+                                                  automatically.
+  -----------------------------------------------------------------------
+**Example: Pure Manual Mode**
+
+If you want to keep your LSP hover completely untouched and use a different key
+for globs:
+
+>lua
+    {
+      "xhugo21/globtrotter.nvim",
+      opts = {
+        override_lsp_hover = false, -- Don't touch the global LSP handler
+        trigger_key = "<leader>g",  -- Use a dedicated key for glob previews
+      }
+    }
+<
+
+
+COMMANDS ~
+
+- `:GlobtrotterTrigger`: Manually trigger the glob matches preview at the current cursor position.
+- `:GlobtrotterToggle`: Toggle the LSP hover override.
+
+
+CONFIGURATION                     *globtrotter-globtrotter.nvim-configuration*
+
+  --------------------------------------------------------------------------------------------------
+  Option               Type              Default           Description
+  -------------------- ----------------- ----------------- -----------------------------------------
+  max_results          number            50                Limits the number of files displayed in
+                                                           the floating window.
+
+  include_hidden       boolean           true              Whether to include dotfiles in the
+                                                           results.
+
+  border               string            winborder or      Border style for the floating window.
+                                         "single"          
+
+  override_lsp_hover   boolean           true              Whether to globally hijack
+                                                           vim.lsp.handlers["textDocument/hover"].
+
+  trigger_key          string            "K"               Key to automatically map to the trigger
+                                                           function.
+  --------------------------------------------------------------------------------------------------
+
+LICENSE                                 *globtrotter-globtrotter.nvim-license*
+
+MIT
+
+Generated by panvimdoc <https://github.com/kdheepak/panvimdoc>
+
+vim:tw=78:ts=8:noet:ft=help:norl:
