@@ -7,6 +7,7 @@ Table of Contents                              *globtrotter-table-of-contents*
   - Installation                   |globtrotter-globtrotter.nvim-installation|
   - Usage                                 |globtrotter-globtrotter.nvim-usage|
   - Configuration                 |globtrotter-globtrotter.nvim-configuration|
+  - Dependencies                   |globtrotter-globtrotter.nvim-dependencies|
   - License                             |globtrotter-globtrotter.nvim-license|
 
 ==============================================================================
@@ -119,6 +120,12 @@ CONFIGURATION                     *globtrotter-globtrotter.nvim-configuration*
   trigger_key          string            "K"               Key to automatically map to the trigger
                                                            function.
   --------------------------------------------------------------------------------------------------
+
+DEPENDENCIES                       *globtrotter-globtrotter.nvim-dependencies*
+
+- **Neovim >= 0.8.0**
+- **mini.icons** (Optional): To display icons next to file matches.
+
 
 LICENSE                                 *globtrotter-globtrotter.nvim-license*
 
