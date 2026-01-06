@@ -29,7 +29,21 @@ local function format_preview_content(pattern, files, truncated, config)
   if #files == 0 then
     table.insert(lines, "_No matching files_")
   else
-    table.insert(lines, string.format("**Matches:** %d file(s)%s", #files, truncated and "+" or ""))
+    local dir_count = 0
+    for _, entry in ipairs(files) do
+      if entry.is_dir then
+        dir_count = dir_count + 1
+      end
+    end
+
+    local label = "file(s)"
+    if dir_count == #files then
+      label = "directory(ies)"
+    elseif dir_count > 0 then
+      label = "item(s)"
+    end
+
+    table.insert(lines, string.format("**Matches:** %d %s%s", #files, label, truncated and "+" or ""))
     table.insert(lines, "")
 
     for _, entry in ipairs(files) do
