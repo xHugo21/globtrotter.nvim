@@ -1,47 +1,77 @@
-# A Neovim Plugin Template
+# globtrotter.nvim
 
-![GitHub Workflow Status](https://img.shields.io/github/actions/workflow/status/ellisonleao/nvim-plugin-template/lint-test.yml?branch=main&style=for-the-badge)
 ![Lua](https://img.shields.io/badge/Made%20with%20Lua-blueviolet.svg?style=for-the-badge&logo=lua)
 
-A template repository for Neovim plugins.
+A Neovim plugin that detects glob patterns under your cursor and shows matching files in an LSP-style floating window.
 
-## Using it
+## Features
 
-Via `gh`:
+- **Smart Detection**: Automatically identifies glob characters (`*`, `?`, `**`, `[...]`, `{...}`) in the word under the cursor.
+- **Ignore File Support**: Full support for `.gitignore`, `.dockerignore`, and other ignore-style files. Every line is treated as a potential glob.
+- **LSP Integration**: Overrides the default LSP hover handler to seamlessly inject glob matching into your existing workflow.
+- **Native UI**: Uses Neovim's built-in floating window API for a consistent look and feel.
+- **Configurable**: Limit result counts, toggle hidden files, and customize window borders.
 
+## Installation
+
+Using [lazy.nvim](https://github.com/folke/lazy.nvim):
+
+```lua
+{
+  "xhugo21/globtrotter.nvim",
+  config = function()
+    require("globtrotter").setup({
+      max_results = 50,      -- Maximum number of files to show
+      include_hidden = true, -- Include hidden files in search
+      border = "rounded",    -- "none", "single", "double", "rounded", "solid", "shadow"
+      auto_enable = true,    -- Automatically enable LSP hover override
+      hover_key = "K",       -- Optional: Automatically set a keymap
+    })
+  end,
+}
 ```
-$ gh repo create my-plugin -p ellisonleao/nvim-plugin-template
+
+## Usage
+
+### Keymap (Manual vs Automatic)
+
+You can let the plugin handle the keymap for you by setting `hover_key` in the configuration:
+
+```lua
+require("globtrotter").setup({
+  hover_key = "K" -- This sets the mapping automatically
+})
 ```
 
-Via github web page:
+Or you can map it yourself to the Globtrotter hover function. It will fall back to `vim.lsp.buf.hover()` if no glob is detected.
 
-Click on `Use this template`
-
-![](https://docs.github.com/assets/cb-36544/images/help/repository/use-this-template-button.png)
-
-## Features and structure
-
-- 100% Lua
-- Github actions for:
-  - running tests using [plenary.nvim](https://github.com/nvim-lua/plenary.nvim) and [busted](https://olivinelabs.com/busted/)
-  - check for formatting errors (Stylua)
-  - vimdocs autogeneration from README.md file
-  - luarocks release (LUAROCKS_API_KEY secret configuration required)
-
-### Plugin structure
-
+```lua
+vim.keymap.set("n", "K", function()
+  require("globtrotter").hover()
+end, { desc = "Hover (Globtrotter / LSP)" })
 ```
-.
-├── lua
-│   ├── plugin_name
-│   │   └── module.lua
-│   └── plugin_name.lua
-├── Makefile
-├── plugin
-│   └── plugin_name.lua
-├── README.md
-├── tests
-│   ├── minimal_init.lua
-│   └── plugin_name
-│       └── plugin_name_spec.lua
-```
+
+### Commands
+
+- `:GlobtrotterHover`: Manually trigger the glob matches popup at the current cursor position.
+- `:GlobtrotterToggle`: Toggle the LSP hover override.
+- `:GlobtrotterEnable`: Enable the LSP hover override.
+- `:GlobtrotterDisable`: Disable the LSP hover override.
+
+## Configuration
+
+| Option | Type | Default | Description |
+| --- | --- | --- | --- |
+| `max_results` | `number` | `50` | Limits the number of files displayed in the floating window. |
+| `include_hidden` | `boolean` | `true` | Whether to include dotfiles in the results. |
+| `border` | `string` | `"rounded"` | Border style for the floating window. |
+| `auto_enable` | `boolean` | `true` | Whether to automatically hijack `vim.lsp.handlers["textDocument/hover"]`. |
+| `hover_key` | `string` | `nil` | Optional: Key to automatically map to the hover function. |
+
+## Contributing
+
+Contributions are welcome! Please feel free to submit a Pull Request.
+
+## License
+
+MIT
