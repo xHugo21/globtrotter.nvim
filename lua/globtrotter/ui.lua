@@ -5,7 +5,7 @@ local detector = require("globtrotter.detector")
 local expander = require("globtrotter.expander")
 
 ---@type function|nil
-local original_hover_handler = nil
+local original_trigger_handler = nil
 
 ---Format the preview content for display
 ---@param pattern string
@@ -61,11 +61,11 @@ local function show_glob_preview(pattern, config)
   return bufnr, winnr
 end
 
----Custom hover handler that checks for glob patterns first
+---Custom trigger handler that checks for glob patterns first
 ---@param config table
 ---@return function
-function M.create_hover_handler(config)
-  return function(err, result, ctx, hover_config)
+function M.create_trigger_handler(config)
+  return function(err, result, ctx, trigger_config)
     local pattern = detector.get_pattern_at_cursor()
 
     if pattern then
@@ -73,24 +73,24 @@ function M.create_hover_handler(config)
       return
     end
 
-    if original_hover_handler then
-      return original_hover_handler(err, result, ctx, hover_config)
+    if original_trigger_handler then
+      return original_trigger_handler(err, result, ctx, trigger_config)
     end
   end
 end
 
----Enable the glob hover override
+---Enable the glob trigger override
 ---@param config table
 function M.enable(config)
-  original_hover_handler = vim.lsp.handlers["textDocument/hover"]
-  vim.lsp.handlers["textDocument/hover"] = M.create_hover_handler(config)
+  original_trigger_handler = vim.lsp.handlers["textDocument/hover"]
+  vim.lsp.handlers["textDocument/hover"] = M.create_trigger_handler(config)
 end
 
----Disable the glob hover override and restore original handler
+---Disable the glob trigger override and restore original handler
 function M.disable()
-  if original_hover_handler then
-    vim.lsp.handlers["textDocument/hover"] = original_hover_handler
-    original_hover_handler = nil
+  if original_trigger_handler then
+    vim.lsp.handlers["textDocument/hover"] = original_trigger_handler
+    original_trigger_handler = nil
   end
 end
 

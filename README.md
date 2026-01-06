@@ -62,7 +62,7 @@ end, { desc = "Trigger (Globtrotter / LSP)" })
 | --- | --- | --- | --- |
 | `max_results` | `number` | `50` | Limits the number of files displayed in the floating window. |
 | `include_hidden` | `boolean` | `true` | Whether to include dotfiles in the results. |
-| `border` | `string` | `"rounded"` | Border style for the floating window. |
+| `border` | `string` | `winborder` or `"rounded"` | Border style for the floating window. |
 | `auto_enable` | `boolean` | `true` | Whether to automatically hijack `vim.lsp.handlers["textDocument/hover"]`. |
 | `trigger_key` | `string` | `nil` | Optional: Key to automatically map to the trigger function. |
 

@@ -1,9 +1,9 @@
 ---@class GlobtrotterConfig
----@field max_results number Maximum number of files to show (default: 50)
----@field include_hidden boolean Include hidden files in results (default: true)
----@field border string|table Border style for floating window (default: "rounded")
----@field auto_enable boolean Automatically enable LSP hover override on setup (default: true)
----@field trigger_key string? Key to trigger the glob preview (default: nil)
+---@field max_results? number Maximum number of files to show (default: 50)
+---@field include_hidden? boolean Include hidden files in results (default: true)
+---@field border? string|table Border style for floating window (default: "rounded")
+---@field auto_enable? boolean Automatically enable LSP hover override on setup (default: true)
+---@field trigger_key? string Key to trigger the glob preview (default: nil)
 
 local ui = require("globtrotter.ui")
 
@@ -14,7 +14,7 @@ local M = {}
 local default_config = {
   max_results = 50,
   include_hidden = true,
-  border = "rounded",
+  border = (vim.o.winborder and vim.o.winborder ~= "") and vim.o.winborder or "rounded",
   auto_enable = true,
   trigger_key = nil,
 }
@@ -25,7 +25,7 @@ M.config = vim.deepcopy(default_config)
 ---@type boolean
 M._enabled = false
 
----Enable the glob override for LSP hover
+---Enable the glob override for LSP trigger
 function M.enable()
   if M._enabled then
     return
@@ -34,7 +34,7 @@ function M.enable()
   M._enabled = true
 end
 
----Disable the glob override for LSP hover
+---Disable the glob override for LSP trigger
 function M.disable()
   if not M._enabled then
     return
@@ -43,7 +43,7 @@ function M.disable()
   M._enabled = false
 end
 
----Toggle the glob override for LSP hover
+---Toggle the glob override for LSP trigger
 function M.toggle()
   if M._enabled then
     M.disable()
@@ -53,7 +53,7 @@ function M.toggle()
 end
 
 ---Manually trigger glob preview at cursor position
----Falls back to LSP hover if no glob pattern detected
+---Falls back to LSP trigger if no glob pattern detected
 function M.trigger()
   local shown = ui.trigger(M.config)
   if not shown then
