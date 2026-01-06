@@ -59,7 +59,7 @@ function M.get_pattern_at_cursor()
     return nil
   end
 
-  local unquoted = word:match('^["\'](.+)["\']$') or word
+  local unquoted = word:match("^[\"'](.+)[\"']$") or word
   if M.has_glob_chars(unquoted) then
     return unquoted
   end
