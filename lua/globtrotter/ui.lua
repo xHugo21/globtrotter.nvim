@@ -13,6 +13,9 @@ local preview_buf = nil
 ---@type function|nil
 local original_trigger_handler = nil
 
+---Highlight namespace for labels
+local ns_id = vim.api.nvim_create_namespace("globtrotter")
+
 ---Format the preview content for display
 ---@param pattern string
 ---@param files GlobtrotterFileEntry[]
@@ -90,6 +93,26 @@ local function show_glob_preview(pattern, config)
   preview_win = winnr
 
   if bufnr then
+    vim.api.nvim_buf_clear_namespace(bufnr, ns_id, 0, -1)
+
+    -- Highlight "Glob Pattern" and "Matches" labels
+    -- Line 0: **Glob Pattern:**
+    vim.api.nvim_buf_set_extmark(bufnr, ns_id, 0, 2, {
+      end_col = 14,
+      hl_group = "Keyword",
+    })
+
+    -- Find the "Matches:" line (usually line 2)
+    for i, line in ipairs(lines) do
+      if line:match("^%*%*Matches:%*%*") then
+        vim.api.nvim_buf_set_extmark(bufnr, ns_id, i - 1, 2, {
+          end_col = 9,
+          hl_group = "Keyword",
+        })
+        break
+      end
+    end
+
     vim.api.nvim_set_option_value("modifiable", false, { buf = bufnr })
     vim.api.nvim_set_option_value("bufhidden", "wipe", { buf = bufnr })
   end
