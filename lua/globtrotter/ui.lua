@@ -4,6 +4,11 @@ local M = {}
 local detector = require("globtrotter.detector")
 local expander = require("globtrotter.expander")
 
+---@type integer|nil
+local preview_win = nil
+---@type integer|nil
+local preview_buf = nil
+
 ---@type function|nil
 local original_trigger_handler = nil
 
@@ -40,6 +45,11 @@ end
 ---@param pattern string
 ---@param config table
 local function show_glob_preview(pattern, config)
+  if preview_win and vim.api.nvim_win_is_valid(preview_win) then
+    vim.api.nvim_set_current_win(preview_win)
+    return preview_buf, preview_win
+  end
+
   local files, truncated = expander.expand(pattern, {
     max_results = config.max_results,
     include_hidden = config.include_hidden,
@@ -52,6 +62,9 @@ local function show_glob_preview(pattern, config)
     focusable = true,
     focus = false,
   })
+
+  preview_buf = bufnr
+  preview_win = winnr
 
   if bufnr then
     vim.api.nvim_set_option_value("modifiable", false, { buf = bufnr })
