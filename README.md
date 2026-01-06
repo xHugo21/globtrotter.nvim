@@ -74,8 +74,6 @@ If you want to keep your LSP hover completely untouched and use a different key 
 
 - `:GlobtrotterTrigger`: Manually trigger the glob matches preview at the current cursor position.
 - `:GlobtrotterToggle`: Toggle the LSP hover override.
-- `:GlobtrotterEnable`: Enable the LSP hover override.
-- `:GlobtrotterDisable`: Disable the LSP hover override.
 
 ## Configuration
 

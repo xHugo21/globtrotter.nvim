@@ -23,32 +23,32 @@ local default_config = {
 M.config = vim.deepcopy(default_config)
 
 ---@type boolean
-M._enabled = false
+local _enabled = false
 
 ---Enable the glob override for LSP trigger
-function M.enable()
-  if M._enabled then
+local function enable(config)
+  if _enabled then
     return
   end
-  ui.enable(M.config)
-  M._enabled = true
+  ui.enable(config)
+  _enabled = true
 end
 
 ---Disable the glob override for LSP trigger
-function M.disable()
-  if not M._enabled then
+local function disable()
+  if not _enabled then
     return
   end
   ui.disable()
-  M._enabled = false
+  _enabled = false
 end
 
 ---Toggle the glob override for LSP trigger
 function M.toggle()
-  if M._enabled then
-    M.disable()
+  if _enabled then
+    disable()
   else
-    M.enable()
+    enable(M.config)
   end
 end
 
@@ -67,7 +67,7 @@ function M.setup(opts)
   M.config = vim.tbl_deep_extend("force", default_config, opts or {})
 
   if M.config.override_lsp_hover then
-    M.enable()
+    enable(M.config)
   end
 
   if M.config.trigger_key then
