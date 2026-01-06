@@ -1,4 +1,4 @@
----@class GlobtrotterHover
+---@class GlobtrotterUI
 local M = {}
 
 local detector = require("globtrotter.detector")
@@ -7,13 +7,13 @@ local expander = require("globtrotter.expander")
 ---@type function|nil
 local original_hover_handler = nil
 
----Format the hover content for display
+---Format the preview content for display
 ---@param pattern string
 ---@param files string[]
 ---@param truncated boolean
 ---@param config table
 ---@return string[]
-local function format_hover_content(pattern, files, truncated, config)
+local function format_preview_content(pattern, files, truncated, config)
   local lines = {}
 
   table.insert(lines, "**Glob Pattern:** `" .. pattern .. "`")
@@ -36,16 +36,16 @@ local function format_hover_content(pattern, files, truncated, config)
   return lines
 end
 
----Show the glob hover popup
+---Show the glob preview popup
 ---@param pattern string
 ---@param config table
-local function show_glob_hover(pattern, config)
+local function show_glob_preview(pattern, config)
   local files, truncated = expander.expand(pattern, {
     max_results = config.max_results,
     include_hidden = config.include_hidden,
   })
 
-  local lines = format_hover_content(pattern, files, truncated, config)
+  local lines = format_preview_content(pattern, files, truncated, config)
 
   local bufnr, winnr = vim.lsp.util.open_floating_preview(lines, "markdown", {
     border = config.border,
@@ -69,7 +69,7 @@ function M.create_hover_handler(config)
     local pattern = detector.get_pattern_at_cursor()
 
     if pattern then
-      show_glob_hover(pattern, config)
+      show_glob_preview(pattern, config)
       return
     end
 
@@ -94,17 +94,17 @@ function M.disable()
   end
 end
 
----Manually trigger glob hover (for use without LSP)
+---Manually trigger glob preview (for use without LSP)
 ---@param config table
 ---@return boolean success Whether a glob pattern was found and displayed
-function M.hover(config)
+function M.trigger(config)
   local pattern = detector.get_pattern_at_cursor()
 
   if not pattern then
     return false
   end
 
-  show_glob_hover(pattern, config)
+  show_glob_preview(pattern, config)
   return true
 end
 

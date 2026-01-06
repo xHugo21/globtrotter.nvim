@@ -2,10 +2,10 @@
 ---@field max_results number Maximum number of files to show (default: 50)
 ---@field include_hidden boolean Include hidden files in results (default: true)
 ---@field border string|table Border style for floating window (default: "rounded")
----@field auto_enable boolean Automatically enable hover override on setup (default: true)
----@field hover_key string? Key to trigger hover (default: nil)
+---@field auto_enable boolean Automatically enable LSP hover override on setup (default: true)
+---@field trigger_key string? Key to trigger the glob preview (default: nil)
 
-local hover = require("globtrotter.hover")
+local ui = require("globtrotter.ui")
 
 ---@class Globtrotter
 local M = {}
@@ -16,7 +16,7 @@ local default_config = {
   include_hidden = true,
   border = "rounded",
   auto_enable = true,
-  hover_key = nil,
+  trigger_key = nil,
 }
 
 ---@type GlobtrotterConfig
@@ -25,25 +25,25 @@ M.config = vim.deepcopy(default_config)
 ---@type boolean
 M._enabled = false
 
----Enable the glob hover override
+---Enable the glob override for LSP hover
 function M.enable()
   if M._enabled then
     return
   end
-  hover.enable(M.config)
+  ui.enable(M.config)
   M._enabled = true
 end
 
----Disable the glob hover override
+---Disable the glob override for LSP hover
 function M.disable()
   if not M._enabled then
     return
   end
-  hover.disable()
+  ui.disable()
   M._enabled = false
 end
 
----Toggle the glob hover override
+---Toggle the glob override for LSP hover
 function M.toggle()
   if M._enabled then
     M.disable()
@@ -52,10 +52,10 @@ function M.toggle()
   end
 end
 
----Manually trigger glob hover at cursor position
+---Manually trigger glob preview at cursor position
 ---Falls back to LSP hover if no glob pattern detected
-function M.hover()
-  local shown = hover.hover(M.config)
+function M.trigger()
+  local shown = ui.trigger(M.config)
   if not shown then
     vim.lsp.buf.hover()
   end
@@ -70,8 +70,8 @@ function M.setup(opts)
     M.enable()
   end
 
-  if M.config.hover_key then
-    vim.keymap.set("n", M.config.hover_key, M.hover, { desc = "Globtrotter / LSP Hover" })
+  if M.config.trigger_key then
+    vim.keymap.set("n", M.config.trigger_key, M.trigger, { desc = "Globtrotter / LSP Trigger" })
   end
 end
 
