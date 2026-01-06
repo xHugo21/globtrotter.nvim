@@ -77,6 +77,11 @@ If you want to keep your LSP hover completely untouched and use a different key 
 | `override_lsp_hover` | `boolean` | `true` | Whether to globally hijack `vim.lsp.handlers["textDocument/hover"]`. |
 | `trigger_key` | `string` | `"K"` | Key to automatically map to the trigger function. |
 
+## Dependencies
+
+- **Neovim >= 0.8.0**
+- **[mini.icons](https://github.com/echasnovski/mini.icons)** (Optional): To display icons next to file matches.
+
 ## License
 
 MIT

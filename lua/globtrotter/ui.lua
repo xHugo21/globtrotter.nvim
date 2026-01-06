@@ -3,6 +3,7 @@ local M = {}
 
 local detector = require("globtrotter.detector")
 local expander = require("globtrotter.expander")
+local icons = require("globtrotter.icons")
 
 ---@type integer|nil
 local preview_win = nil
@@ -14,12 +15,13 @@ local original_trigger_handler = nil
 
 ---Format the preview content for display
 ---@param pattern string
----@param files string[]
+---@param files GlobtrotterFileEntry[]
 ---@param truncated boolean
 ---@param config table
----@return string[]
+---@return string[] lines
 local function format_preview_content(pattern, files, truncated, config)
   local lines = {}
+  local has_icons = icons.is_available()
 
   table.insert(lines, "**Glob Pattern:** `" .. pattern .. "`")
   table.insert(lines, "")
@@ -29,9 +31,16 @@ local function format_preview_content(pattern, files, truncated, config)
   else
     table.insert(lines, string.format("**Matches:** %d file(s)%s", #files, truncated and "+" or ""))
     table.insert(lines, "")
-    for _, file in ipairs(files) do
-      table.insert(lines, "- " .. file)
+
+    for _, entry in ipairs(files) do
+      local prefix = "- "
+      if has_icons then
+        local icon, _ = icons.get_icon(entry)
+        prefix = "- " .. icon .. " "
+      end
+      table.insert(lines, prefix .. entry.path)
     end
+
     if truncated then
       table.insert(lines, "")
       table.insert(lines, string.format("_...truncated to %d results_", config.max_results))

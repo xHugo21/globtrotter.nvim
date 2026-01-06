@@ -1,6 +1,10 @@
 ---@class GlobtrotterExpander
 local M = {}
 
+---@class GlobtrotterFileEntry
+---@field path string Relative file path
+---@field is_dir boolean Whether the entry is a directory
+
 ---Convert a glob pattern to a Lua pattern for vim.fn.glob
 ---Handles glob-only patterns (leading /, negation, etc.)
 ---@param pattern string
@@ -21,7 +25,7 @@ end
 ---Expand a glob pattern and return matching files
 ---@param pattern string The glob pattern
 ---@param opts? {max_results?: number, cwd?: string, include_hidden?: boolean}
----@return string[] files List of matching file paths (relative to cwd)
+---@return GlobtrotterFileEntry[] files List of matching file entries (relative to cwd)
 ---@return boolean truncated Whether the results were truncated
 function M.expand(pattern, opts)
   opts = opts or {}
@@ -46,7 +50,8 @@ function M.expand(pattern, opts)
       break
     end
     local relative = file:sub(cwd_len)
-    table.insert(files, relative)
+    local is_dir = vim.fn.isdirectory(file) == 1
+    table.insert(files, { path = relative, is_dir = is_dir })
   end
 
   return files, #raw_files > max_results
