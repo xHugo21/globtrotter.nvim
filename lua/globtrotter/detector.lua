@@ -3,12 +3,12 @@ local M = {}
 
 local GLOB_CHARS_PATTERN = "[%*%?%[%]{}]"
 
-local GITIGNORE_FILETYPES = {
+local GLOB_ONLY_FILETYPES = {
   gitignore = true,
   ["ignore"] = true,
 }
 
-local GITIGNORE_FILENAMES = {
+local GLOB_ONLY_FILENAMES = {
   [".gitignore"] = true,
   [".dockerignore"] = true,
   [".prettierignore"] = true,
@@ -20,16 +20,16 @@ local GITIGNORE_FILENAMES = {
   [".vscodeignore"] = true,
 }
 
----Check if the current buffer is a gitignore-style file
+---Check if the current buffer is a glob-only file
 ---@return boolean
-function M.is_gitignore_file()
+function M.is_glob_only_file()
   local ft = vim.bo.filetype
-  if GITIGNORE_FILETYPES[ft] then
+  if GLOB_ONLY_FILETYPES[ft] then
     return true
   end
 
   local filename = vim.fn.expand("%:t")
-  return GITIGNORE_FILENAMES[filename] or false
+  return GLOB_ONLY_FILENAMES[filename] or false
 end
 
 ---Check if a string contains glob characters
@@ -40,13 +40,13 @@ function M.has_glob_chars(str)
 end
 
 ---Extract the pattern from the current cursor position
----For gitignore files, returns the entire line (stripped)
+---For glob-only files, returns the entire line (stripped)
 ---For other files, returns the WORD under cursor if it contains glob chars
 ---@return string|nil pattern The glob pattern, or nil if not found
 function M.get_pattern_at_cursor()
   local line = vim.api.nvim_get_current_line()
 
-  if M.is_gitignore_file() then
+  if M.is_glob_only_file() then
     local pattern = vim.trim(line)
     if pattern == "" or pattern:sub(1, 1) == "#" then
       return nil

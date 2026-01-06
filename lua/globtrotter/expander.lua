@@ -2,9 +2,9 @@
 local M = {}
 
 ---Convert a glob pattern to a Lua pattern for vim.fn.glob
----Handles gitignore-style patterns (leading /, negation, etc.)
+---Handles glob-only patterns (leading /, negation, etc.)
 ---@param pattern string
----@return string normalized_pattern
+---@return string|nil normalized_pattern
 local function normalize_pattern(pattern)
   if pattern:sub(1, 1) == "!" then
     return nil
@@ -22,6 +22,7 @@ end
 ---@param pattern string The glob pattern
 ---@param opts? {max_results?: number, cwd?: string, include_hidden?: boolean}
 ---@return string[] files List of matching file paths (relative to cwd)
+---@return boolean truncated Whether the results were truncated
 function M.expand(pattern, opts)
   opts = opts or {}
   local max_results = opts.max_results or 50
@@ -30,7 +31,7 @@ function M.expand(pattern, opts)
 
   local normalized = normalize_pattern(pattern)
   if not normalized then
-    return {}
+    return {}, false
   end
 
   local glob_pattern = cwd .. "/" .. normalized
