@@ -36,9 +36,14 @@ Using [lazy.nvim](https://github.com/folke/lazy.nvim):
 You can let the plugin handle the keymap for you by setting `trigger_key` in the configuration:
 
 ```lua
-require("globtrotter").setup({
-  trigger_key = "K" -- This sets the mapping automatically
-})
+    require("globtrotter").setup({
+      max_results = 50,      -- Maximum number of files to show
+      include_hidden = true, -- Include hidden files in search
+      border = "single",     -- "none", "single", "double", "rounded", "solid", "shadow"
+      auto_enable = true,    -- Automatically enable LSP hover override
+      trigger_key = "K",     -- Optional: Automatically set a keymap to trigger the preview
+    })
+
 ```
 
 Or you can map it yourself to the Globtrotter trigger function. It will fall back to `vim.lsp.buf.hover()` if no glob is detected.
@@ -62,13 +67,9 @@ end, { desc = "Trigger (Globtrotter / LSP)" })
 | --- | --- | --- | --- |
 | `max_results` | `number` | `50` | Limits the number of files displayed in the floating window. |
 | `include_hidden` | `boolean` | `true` | Whether to include dotfiles in the results. |
-| `border` | `string` | `winborder` or `"rounded"` | Border style for the floating window. |
+| `border` | `string` | `winborder` or `"single"` | Border style for the floating window. |
 | `auto_enable` | `boolean` | `true` | Whether to automatically hijack `vim.lsp.handlers["textDocument/hover"]`. |
 | `trigger_key` | `string` | `nil` | Optional: Key to automatically map to the trigger function. |
-
-## Contributing
-
-Contributions are welcome! Please feel free to submit a Pull Request.
 
 ## License
 

@@ -1,7 +1,7 @@
 ---@class GlobtrotterConfig
 ---@field max_results? number Maximum number of files to show (default: 50)
 ---@field include_hidden? boolean Include hidden files in results (default: true)
----@field border? string|table Border style for floating window (default: "rounded")
+---@field border? string|table Border style for floating window (default: "single")
 ---@field auto_enable? boolean Automatically enable LSP hover override on setup (default: true)
 ---@field trigger_key? string Key to trigger the glob preview (default: nil)
 
@@ -14,7 +14,7 @@ local M = {}
 local default_config = {
   max_results = 50,
   include_hidden = true,
-  border = (vim.o.winborder and vim.o.winborder ~= "") and vim.o.winborder or "rounded",
+  border = (vim.o.winborder and vim.o.winborder ~= "") and vim.o.winborder or "single",
   auto_enable = true,
   trigger_key = nil,
 }
