@@ -1,0 +1,111 @@
+---@class GlobtrotterHover
+local M = {}
+
+local detector = require("globtrotter.detector")
+local expander = require("globtrotter.expander")
+
+---@type function|nil
+local original_hover_handler = nil
+
+---Format the hover content for display
+---@param pattern string
+---@param files string[]
+---@param truncated boolean
+---@param config table
+---@return string[]
+local function format_hover_content(pattern, files, truncated, config)
+  local lines = {}
+
+  table.insert(lines, "**Glob Pattern:** `" .. pattern .. "`")
+  table.insert(lines, "")
+
+  if #files == 0 then
+    table.insert(lines, "_No matching files_")
+  else
+    table.insert(lines, string.format("**Matches:** %d file(s)%s", #files, truncated and "+" or ""))
+    table.insert(lines, "")
+    for _, file in ipairs(files) do
+      table.insert(lines, "- " .. file)
+    end
+    if truncated then
+      table.insert(lines, "")
+      table.insert(lines, string.format("_...truncated to %d results_", config.max_results))
+    end
+  end
+
+  return lines
+end
+
+---Show the glob hover popup
+---@param pattern string
+---@param config table
+local function show_glob_hover(pattern, config)
+  local files, truncated = expander.expand(pattern, {
+    max_results = config.max_results,
+    include_hidden = config.include_hidden,
+  })
+
+  local lines = format_hover_content(pattern, files, truncated, config)
+
+  local bufnr, winnr = vim.lsp.util.open_floating_preview(lines, "markdown", {
+    border = config.border,
+    focusable = true,
+    focus = false,
+  })
+
+  if bufnr then
+    vim.api.nvim_set_option_value("modifiable", false, { buf = bufnr })
+    vim.api.nvim_set_option_value("bufhidden", "wipe", { buf = bufnr })
+  end
+
+  return bufnr, winnr
+end
+
+---Custom hover handler that checks for glob patterns first
+---@param config table
+---@return function
+function M.create_hover_handler(config)
+  return function(err, result, ctx, hover_config)
+    local pattern = detector.get_pattern_at_cursor()
+
+    if pattern then
+      show_glob_hover(pattern, config)
+      return
+    end
+
+    if original_hover_handler then
+      return original_hover_handler(err, result, ctx, hover_config)
+    end
+  end
+end
+
+---Enable the glob hover override
+---@param config table
+function M.enable(config)
+  original_hover_handler = vim.lsp.handlers["textDocument/hover"]
+  vim.lsp.handlers["textDocument/hover"] = M.create_hover_handler(config)
+end
+
+---Disable the glob hover override and restore original handler
+function M.disable()
+  if original_hover_handler then
+    vim.lsp.handlers["textDocument/hover"] = original_hover_handler
+    original_hover_handler = nil
+  end
+end
+
+---Manually trigger glob hover (for use without LSP)
+---@param config table
+---@return boolean success Whether a glob pattern was found and displayed
+function M.hover(config)
+  local pattern = detector.get_pattern_at_cursor()
+
+  if not pattern then
+    return false
+  end
+
+  show_glob_hover(pattern, config)
+  return true
+end
+
+return M

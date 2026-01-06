@@ -1,0 +1,61 @@
+local detector = require("globtrotter.detector")
+local expander = require("globtrotter.expander")
+
+describe("globtrotter", function()
+  describe("detector", function()
+    describe("has_glob_chars", function()
+      it("detects asterisk", function()
+        assert.is_true(detector.has_glob_chars("*.lua"))
+      end)
+
+      it("detects double asterisk", function()
+        assert.is_true(detector.has_glob_chars("**/*.ts"))
+      end)
+
+      it("detects question mark", function()
+        assert.is_true(detector.has_glob_chars("file?.txt"))
+      end)
+
+      it("detects bracket patterns", function()
+        assert.is_true(detector.has_glob_chars("file[0-9].txt"))
+      end)
+
+      it("detects brace patterns", function()
+        assert.is_true(detector.has_glob_chars("*.{js,ts}"))
+      end)
+
+      it("returns false for plain strings", function()
+        assert.is_false(detector.has_glob_chars("plain_file.txt"))
+      end)
+    end)
+  end)
+
+  describe("expander", function()
+    describe("expand", function()
+      it("returns empty table for negation patterns", function()
+        local files = expander.expand("!node_modules")
+        assert.are.same({}, files)
+      end)
+
+      it("respects max_results option", function()
+        local files = expander.expand("*", { max_results = 5 })
+        assert.is_true(#files <= 5)
+      end)
+    end)
+  end)
+
+  describe("setup", function()
+    local globtrotter = require("globtrotter")
+
+    it("merges user config with defaults", function()
+      globtrotter.setup({ max_results = 100 })
+      assert.are.equal(100, globtrotter.config.max_results)
+      assert.are.equal(true, globtrotter.config.include_hidden)
+    end)
+
+    it("uses default config when no args", function()
+      globtrotter.setup()
+      assert.are.equal(50, globtrotter.config.max_results)
+    end)
+  end)
+end)
