@@ -1,4 +1,4 @@
-*globtrotter.txt*       For Neovim >= 0.8.0       Last change: 2026 January 06
+*globtrotter.txt*       For Neovim >= 0.8.0       Last change: 2026 January 11
 
 ==============================================================================
 Table of Contents                              *globtrotter-table-of-contents*
